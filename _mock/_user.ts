@@ -105,7 +105,7 @@ export const USERS = {
       !(data.userName === 'admin' || data.userName === 'user') ||
       data.password !== '123456'
     ) {
-      return { msg: `Invalid username or password（admin/ng-alain.com）` };
+      return { msg: `Invalid username or password（admin/123456）` };
     }
     return {
       msg: 'ok',

@@ -67,7 +67,7 @@ export class StartupService {
       resolve(null);
     });
   }
-  
+
   private viaMockI18n(resolve: any, reject: any) {
     this.httpClient
       .get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`)
@@ -78,17 +78,17 @@ export class StartupService {
         this.viaMock(resolve, reject);
       });
   }
-  
+
   private viaMock(resolve: any, reject: any) {
     // const tokenData = this.tokenService.get();
     // if (!tokenData.token) {
-    //   this.injector.get(Router).navigateByUrl('/passport/login');
+    //   this.injector.get(Router).navigateByUrl('/auth/login');
     //   resolve({});
     //   return;
     // }
     // mock
     const app: any = {
-      name: `ng-alain`,
+      name: `YOFCLOUD`,
       description: `Ng-zorro admin panel front-end framework`
     };
     const user: any = {
@@ -122,8 +122,8 @@ export class StartupService {
         ]
       }
     ]);
-    // 设置页面标题的后缀
-    this.titleService.suffix = app.name;
+    // 设置页面标题的前缀
+    this.titleService.prefix = app.name;
 
     resolve({});
   }

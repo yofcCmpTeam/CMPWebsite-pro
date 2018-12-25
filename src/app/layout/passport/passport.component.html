@@ -1,18 +1,30 @@
 <div class="container">
-  <header-i18n [showLang]="false" class="langs"></header-i18n>
+  <!-- <header-i18n [showLang]="false" class="langs"></header-i18n> -->
+  <div class="background-ball">
+    <img src="../../../assets/tmp/img/yofc-login-bg.png" alt="">
+  </div>
   <div class="wrap">
-    <div class="top">
-      <div class="head">
-        <img class="logo" src="./assets/logo-color.svg">
-        <span class="title">ng-alain</span>
-      </div>
-      <div class="desc">武林中最有影响力的《葵花宝典》；欲练神功，挥刀自宫</div>
+    <div class="login-header">
+        <img class="logo" src="../../../assets/tmp/img/yofc-cmp-logo.png">
     </div>
-    <router-outlet></router-outlet>
-    <global-footer [links]="links">
+
+    <div class="login-content">
+      <div class="top">
+        <img class="logo" src="../../../assets/tmp/img/yofc-cmp-logo-2.png" alt="">
+        <div class="desc">长飞云管理平台</div>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- <global-footer [links]="links">
       Copyright
       <i class="anticon anticon-copyright"></i> 2017
       <a href="//github.com/cipchk" target="_blank">卡色</a>出品
+    </global-footer> -->
+
+    <global-footer class="login-footer">
+      Copyright
+      <i class="anticon anticon-copyright"></i> 2017-2018&#8197;长飞光纤股份有限公司版权所有
     </global-footer>
   </div>
 </div>

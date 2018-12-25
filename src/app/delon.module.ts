@@ -54,7 +54,7 @@ export function fnPageHeaderConfig(): PageHeaderConfig {
 import { DelonAuthConfig } from '@delon/auth';
 export function fnDelonAuthConfig(): DelonAuthConfig {
   return Object.assign(new DelonAuthConfig(), <DelonAuthConfig>{
-    login_url: '/passport/login',
+    login_url: '/auth/login',
   });
 }
 

@@ -17,8 +17,8 @@ CMPWebsite
 ## 开始
 
 <div>
-  一，npm install 安装所有包
-  二，npm start 启动项目
+  + npm install 安装所有包
+  + npm start 启动项目
 </div>
 
 ## 链接
