@@ -3,6 +3,9 @@ import { Component, OnDestroy, Inject, Optional } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+
+// 引入加密库
+const CryptoJS = require('crypto-js');
 import {
   SocialService,
   SocialOpenType,
@@ -66,11 +69,11 @@ export class UserLoginComponent implements OnDestroy {
   form: FormGroup;
   error = '';
 
-
   // #region get captcha
 
   count = 0;
   interval$: any;
+
 
   // #endregion
 
@@ -87,7 +90,19 @@ export class UserLoginComponent implements OnDestroy {
     }, 1000);
   }
 
-  // #endregion
+
+  encrypt(word: string) {
+    const key = CryptoJS.enc.Utf8.parse('yofcloud-saltkey');
+    const srcs = CryptoJS.enc.Utf8.parse(word);
+    const encrypted = CryptoJS.AES.encrypt(srcs, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+    return encrypted.toString();
+  }
+
+  decrypt(word: string) {
+      const key = CryptoJS.enc.Utf8.parse('yofcloud-saltkey');
+      const decrypt = CryptoJS.AES.decrypt(word, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+      return CryptoJS.enc.Utf8.stringify(decrypt).toString();
+  }
 
   submit() {
     this.error = '';
@@ -101,9 +116,10 @@ export class UserLoginComponent implements OnDestroy {
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.http
-      .post('/login/account?_allow_anonymous=true', {
-        userName: this.userName.value,
-        password: this.password.value,
+      .post('/rest/login/doLogin', {
+        userName: this.encrypt(this.userName.value),
+        password: this.encrypt(this.password.value),
+        loginType: 1
       })
       .subscribe((res: any) => {
         if (res.msg !== 'ok') {

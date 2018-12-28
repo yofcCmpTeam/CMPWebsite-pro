@@ -35,6 +35,7 @@ export class StartupService {
   }
 
   private viaHttp(resolve: any, reject: any) {
+    console.log('appData');
     zip(
       this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
       this.httpClient.get('assets/tmp/app-data.json')
@@ -45,6 +46,7 @@ export class StartupService {
           return [langData, appData];
       })
     ).subscribe(([langData, appData]) => {
+      console.log('appData', appData);
       // setting language data
       this.translate.setTranslation(this.i18n.defaultLang, langData);
       this.translate.setDefaultLang(this.i18n.defaultLang);
@@ -59,8 +61,8 @@ export class StartupService {
       this.aclService.setFull(true);
       // 初始化菜单
       this.menuService.add(res.menu);
-      // 设置页面标题的后缀
-      this.titleService.suffix = res.app.name;
+      // 设置页面标题的前缀
+      this.titleService.prefix = res.app.name;
     },
     () => { },
     () => {
@@ -133,9 +135,9 @@ export class StartupService {
     // https://github.com/angular/angular/issues/15088
     return new Promise((resolve, reject) => {
       // http
-      // this.viaHttp(resolve, reject);
+      this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      this.viaMockI18n(resolve, reject);
+      // this.viaMockI18n(resolve, reject);
 
     });
   }

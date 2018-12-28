@@ -1,0 +1,9 @@
+
+{
+  "/rest/*": {
+  "target": "http://192.168.8.91:8888",
+  "secure": false,
+  "changeOrigin": true,
+  "logLevel": "debug"
+  }
+}

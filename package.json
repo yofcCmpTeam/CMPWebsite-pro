@@ -40,6 +40,7 @@
     "@ngx-translate/http-loader": "^4.0.0",
     "ajv": "^6.6.2",
     "core-js": "^2.5.4",
+    "crypto-js": "^3.1.9-1",
     "editorconfig-tools": "^0.1.1",
     "husky": "^1.1.0",
     "jquery": "^3.3.1",
