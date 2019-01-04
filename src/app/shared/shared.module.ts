@@ -13,14 +13,19 @@ import { TranslateModule } from '@ngx-translate/core';
 // #region third libs
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { CountdownModule } from 'ngx-countdown';
+
 const THIRDMODULES = [
   NgZorroAntdModule,
   CountdownModule
 ];
-// #endregion
 
 // #region your componets & directives
-const COMPONENTS = [];
+// actoins
+import { ForgetPasswordComponent } from './actions/forget-password/forget-password.component';
+
+const COMPONENTS = [
+  ForgetPasswordComponent
+];
 const DIRECTIVES = [];
 // #endregion
 
@@ -40,7 +45,7 @@ const DIRECTIVES = [];
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
+    ...DIRECTIVES,
   ],
   exports: [
     CommonModule,
@@ -58,6 +63,10 @@ const DIRECTIVES = [];
     // your components
     ...COMPONENTS,
     ...DIRECTIVES
+  ],
+  // 注意 如果使用Component模式，则需要在NgModule中的 declarations 和 entryComponents 加入自定义的Component
+  entryComponents: [
+    ForgetPasswordComponent
   ]
 })
 export class SharedModule { }

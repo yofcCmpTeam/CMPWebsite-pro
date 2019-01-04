@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
       .pipe(filter(evt => evt instanceof NavigationEnd))
       .subscribe(() => {
         this.titleSrv.setTitle();
-        this.modalSrv.closeAll();
+        // this.modalSrv.closeAll();
       });
   }
 }

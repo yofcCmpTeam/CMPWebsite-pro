@@ -57,10 +57,10 @@ const FORM_MODULES = [ JsonSchemaModule ];
 
 // #region Http Interceptors
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { SimpleInterceptor } from '@delon/auth';
+// import { SimpleInterceptor } from '@delon/auth';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
 const INTERCEPTOR_PROVIDES = [
-  { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
+  // { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
   { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
 ];
 // #endregion
@@ -75,6 +75,8 @@ import { StartupService } from '@core/startup/startup.service';
 export function StartupServiceFactory(startupService: StartupService): Function {
   return () => startupService.load();
 }
+import { CommonService } from './shared/services/common.service';
+import { AuthService } from './shared/services/auth.service';
 const APPINIT_PROVIDES = [
   StartupService,
   {
@@ -82,7 +84,9 @@ const APPINIT_PROVIDES = [
     useFactory: StartupServiceFactory,
     deps: [StartupService],
     multi: true
-  }
+  },
+  CommonService,
+  AuthService
 ];
 // #endregion
 

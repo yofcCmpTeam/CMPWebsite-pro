@@ -1,36 +1,40 @@
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
   <h2 class="form-title"><nz-divider nzType="vertical" class="title-divider"></nz-divider>长飞云账号登录</h2>
-  <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+  <!-- <nz-alert  [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert> -->
   <div class="form-content">
     <nz-form-item>
       <nz-form-control>
         <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-user">
-          <input nz-input formControlName="userName" placeholder="username: admin or user">
+          <input nz-input formControlName="userName"
+                  placeholder="账号" minlength="1" maxlength="25"
+                  (keypress)="detectCapsLock($event)" (keydown)="toggleCpas($event)" required>
         </nz-input-group>
-        <nz-form-explain *ngIf="userName.dirty && userName.errors">
-          {{ 'Please enter mobile number!' | translate }}
-        </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-control>
         <nz-input-group nzSize="large" nzPrefixIcon="anticon anticon-lock">
-          <input nz-input type="password" formControlName="password" placeholder="password: 123456">
+          <input nz-input type="password" formControlName="password"
+                  placeholder="密码" minlength="6" maxlength="20"
+                  (keypress)="detectCapsLock($event)" (keydown)="toggleCpas($event)" required>
         </nz-input-group>
-        <nz-form-explain *ngIf="password.dirty && password.errors">
-          {{ 'Please enter password!' | translate }}
-        </nz-form-explain>
       </nz-form-control>
     </nz-form-item>
+
+    <nz-alert *ngIf="capital" [nzType]="'warning'" nzMessage="大小写锁定已打开!" [nzShowIcon]="false" class="mb-lg"></nz-alert>
 
     <nz-form-item>
       <nz-col [nzSpan]="12">
         <label nz-checkbox formControlName="remember">{{ 'app.login.remember-me' | translate }}</label>
       </nz-col>
       <nz-col [nzSpan]="12" class="text-right">
-        <a class="forgot" (click)="msg.error('请找欧阳锋')">{{ ('app.login.forgot-password' | translate) + '?' }}</a>
+          <!-- <app-forget-password></app-forget-password> -->
+        <a class="forgot" (click)="openForgotModel()">{{ ('app.login.forgot-password' | translate) + '?' }}</a>
       </nz-col>
     </nz-form-item>
+
+    <nz-alert *ngIf="userName.dirty && userName.errors || password.dirty && password.errors" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="false" class="mb-lg"></nz-alert>
+
     <nz-form-item>
       <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="http.loading" nzBlock>
         {{ 'app.login.login' | translate }}
@@ -39,4 +43,5 @@
   </div>
 
 </form>
+
 

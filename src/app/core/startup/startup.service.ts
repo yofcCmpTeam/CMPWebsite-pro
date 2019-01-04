@@ -13,6 +13,9 @@ import { NzIconService } from 'ng-zorro-antd';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
 
+// 获取用户基础数据
+
+
 /**
  * 用于应用启动时
  * 一般用来获取应用所需要的基础数据等
@@ -27,7 +30,7 @@ export class StartupService {
     private settingService: SettingsService,
     private aclService: ACLService,
     private titleService: TitleService,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    // @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
     private injector: Injector
   ) {
@@ -35,7 +38,6 @@ export class StartupService {
   }
 
   private viaHttp(resolve: any, reject: any) {
-    console.log('appData');
     zip(
       this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
       this.httpClient.get('assets/tmp/app-data.json')

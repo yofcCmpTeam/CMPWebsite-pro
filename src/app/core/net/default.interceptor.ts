@@ -1,6 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse, HttpResponse, HttpEvent, HttpResponseBase } from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler,
+        HttpErrorResponse, HttpResponse, HttpEvent, HttpResponseBase } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { mergeMap, catchError } from 'rxjs/operators';
 import { NzMessageService, NzNotificationService } from 'ng-zorro-antd';
@@ -40,17 +41,31 @@ export class DefaultInterceptor implements HttpInterceptor {
     setTimeout(() => this.injector.get(Router).navigateByUrl(url));
   }
 
-  private checkStatus(ev: HttpResponseBase) {
+  private checkStatus(ev:  HttpResponseBase) {
     if (ev.status >= 200 && ev.status < 300) return;
 
-    const errortext = CODEMESSAGE[ev.status] || ev.statusText;
-    this.injector.get(NzNotificationService).error(
-      `请求错误 ${ev.status}: ${ev.url}`,
+    const errortext =  CODEMESSAGE[ev.status] || ev.statusText;
+    // if ( ev.error.message ) {
+    //   errortext = ev.error.message;
+    // }
+    this.injector.get(NzNotificationService).success(
+      `请求错误 ${ev.status}:`,
       errortext
     );
+    // if (ev.status >= 200 && ev.status < 300) {
+    //   this.injector.get(NzNotificationService).success(
+    //     `请求错误 ${ev.status}:`,
+    //     errortext
+    //   );
+    // } else {
+    //   this.injector.get(NzNotificationService).error(
+    //     `请求错误 ${ev.status}:`,
+    //     errortext
+    //   );
+    // }
   }
 
-  private handleData(ev: HttpResponseBase): Observable<any> {
+  private handleData(ev:  HttpResponseBase): Observable<any> {
     // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
     if (ev.status > 0) {
       this.injector.get(_HttpClient).end();
@@ -70,6 +85,10 @@ export class DefaultInterceptor implements HttpInterceptor {
         //         this.msg.error(body.msg);
         //         // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
         //         // this.http.get('/').subscribe() 并不会触发
+        //         this.injector.get(NzNotificationService).success(
+        //           `请求错误 ${ev.status}:`,
+        //           body.msg
+        //         );
         //         return throwError({});
         //     } else {
         //         // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
@@ -78,6 +97,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         //         return of(event);
         //     }
         // }
+
         break;
       case 401: // 未登录状态码
         // 请求错误 401: https://preview.pro.ant.design/api/401 用户没有权限（令牌、用户名、密码错误）。
@@ -91,7 +111,8 @@ export class DefaultInterceptor implements HttpInterceptor {
       default:
         if (ev instanceof HttpErrorResponse) {
           console.warn('未可知错误，大部分是由于后端不支持CORS或无效配置引起', ev);
-          this.msg.error(ev.message);
+          // return of(obs);
+          // this.msg.error(ev.message);
         }
         break;
     }
@@ -112,12 +133,14 @@ export class DefaultInterceptor implements HttpInterceptor {
     return next.handle(newReq).pipe(
       mergeMap((event: any) => {
         // 允许统一对请求错误处理
-        if (event instanceof HttpResponseBase)
+        if (event instanceof HttpResponseBase) {
           return this.handleData(event);
+        }
+
         // 若一切都正常，则后续操作
         return of(event);
       }),
-      catchError((err: HttpErrorResponse) => this.handleData(err)),
+      // catchError((err: HttpErrorResponse, obs: any) => this.handleData(err, obs)),
     );
   }
 }
