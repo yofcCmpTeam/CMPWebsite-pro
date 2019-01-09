@@ -14,14 +14,14 @@ CMPWebsite
 
 </div>
 
-## 开始
+## start
 
 <div>
   + npm install 安装所有包
   + npm start 启动项目
 </div>
 
-## 链接
+## link
 
 + [文档](https://ng-alain.com)
 + [@delon](https://github.com/ng-alain/delon)
