@@ -4,7 +4,10 @@ CMPWebsite
 </h1>
 
 <div align="center">
-  a management platform for private cloud base on **angular7** **ng-zorro** **ng-alain**
+  a management platform for private cloud base on 
+  `angular7`
+  `ng-zorro`
+  `ng-alain`
 </div>
 
 ## start
