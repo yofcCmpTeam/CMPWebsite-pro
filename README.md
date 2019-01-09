@@ -4,14 +4,14 @@ CMPWebsite
 </h1>
 
 <div align="center">
-  a management platform for private cloud base on [angular7](https://angular.cn/) [ng-alain](https://github.com/ng-alain/delon) 
+  a management platform for private cloud base on **angular7** **ng-zorro** **ng-alain**
 </div>
 
 ## start
-
+```
 + npm install 安装所有包
 + npm start 启动项目
-
+```
 
 ## base on
 
