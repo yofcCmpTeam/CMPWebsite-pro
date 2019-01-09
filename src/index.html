@@ -1,17 +1,334 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>YOFCLOUD - 云管理平台</title>
   <base href="/">
-
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <style type="text/css">.preloader{position:fixed;top:0;left:0;width:100%;height:100%;overflow:hidden;background:#49a9ee;z-index:9999;transition:opacity .65s}.preloader-hidden-add{opacity:1;display:block}.preloader-hidden-add-active{opacity:0}.preloader-hidden{display:none}.cs-loader{position:absolute;top:0;left:0;height:100%;width:100%}.cs-loader-inner{transform:translateY(-50%);top:50%;position:absolute;width:100%;color:#fff;text-align:center}.cs-loader-inner label{font-size:20px;opacity:0;display:inline-block}@keyframes lol{0%{opacity:0;transform:translateX(-300px)}33%{opacity:1;transform:translateX(0)}66%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(300px)}}.cs-loader-inner label:nth-child(6){animation:lol 3s infinite ease-in-out}.cs-loader-inner label:nth-child(5){animation:lol 3s .1s infinite ease-in-out}.cs-loader-inner label:nth-child(4){animation:lol 3s .2s infinite ease-in-out}.cs-loader-inner label:nth-child(3){animation:lol 3s .3s infinite ease-in-out}.cs-loader-inner label:nth-child(2){animation:lol 3s .4s infinite ease-in-out}.cs-loader-inner label:nth-child(1){animation:lol 3s .5s infinite ease-in-out}
+  <link rel="stylesheet" href="./assets/tmp/css/iconfont/iconfont.css">
+  <link rel="stylesheet" href="./assets/tmp/css/yf-font.min.css">
+  <style type="text/css">
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #fff;
+      z-index: 9999;
+      transition: opacity .65s
+    }
+
+    .preloader-hidden-add {
+      opacity: 1;
+      display: block
+    }
+
+    .preloader-hidden-add-active {
+      opacity: 0
+    }
+
+    .preloader-hidden {
+      display: none
+    }
+
+    @-webkit-keyframes ball-pulse-sync {
+      33% {
+        -webkit-transform: translateY(10px);
+        transform: translateY(10px)
+      }
+
+      66% {
+        -webkit-transform: translateY(-10px);
+        transform: translateY(-10px)
+      }
+
+      100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes ball-pulse-sync {
+      33% {
+        -webkit-transform: translateY(10px);
+        transform: translateY(10px)
+      }
+
+      66% {
+        -webkit-transform: translateY(-10px);
+        transform: translateY(-10px)
+      }
+
+      100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+      }
+    }
+
+    .ball-pulse-sync {
+      display: block;
+      position: absolute;
+      height: 60px;
+      top: 50%;
+      left: 50%;
+      margin-left: -124px;
+      margin-top: -60px
+    }
+
+    .ball-pulse-sync>div:nth-child(0) {
+      -webkit-animation: ball-pulse-sync 0.6s 0s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(1) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.07s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.07s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(2) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.14s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.14s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(3) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.21s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.21s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(4) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.28s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.28s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(5) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.35s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.35s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(6) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.42s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.42s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(7) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.49s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.49s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div:nth-child(8) {
+      -webkit-animation: ball-pulse-sync 0.6s 0.56s infinite ease-in-out;
+      animation: ball-pulse-sync 0.6s 0.56s infinite ease-in-out
+    }
+
+    .ball-pulse-sync>div {
+      -webkit-animation-fill-mode: both;
+      animation-fill-mode: both;
+      display: inline-block;
+      color: #00c1de;
+      font-size: 60px;
+      margin-right: -35px
+    }
+
+    #yofc-ua-spa{
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: #0f0f10 url(assets/images/yofc-login-bg.png) no-repeat center center!important;
+    }
+
+    #yofc-ua-spa .login-header {
+      position: relative;
+      padding: 32px 100px;
+    }
+    #yofc-ua-spa .login-header .login-header-logo {
+      width: 100px;
+      height: 15px;
+    }
+    #yofc-ua-spa .login-header .pull-left {
+      float: left !important;
+    }
+    #yofc-ua-spa .login-header .login-header-logo img {
+      display: block;
+      width: 100%;
+      vertical-align: middle;
+    }
+    #yofc-ua-spa #yofc-ua-detect {
+      position: fixed;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      z-index: 10000;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      top: 50%!important;
+      margin: 0!important;
+      padding: 0!important;
+      margin-top: -168px!important;
+    }
+    #yofc-ua-spa #yofc-ua-detect .ngdialog-content {
+      background: #fff;
+      -webkit-backface-visibility: hidden;
+      -webkit-animation: ngdialog-fadein .5s;
+      animation: ngdialog-fadein .5s;
+      pointer-events: all;
+      width: 600px;
+      margin: 0 auto;
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal {
+      background-color: #fff;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal-header {
+      text-align: center;
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal-header h2 {
+      height: 55px;
+      line-height: 55px;
+      font-size: 14px;
+      margin-top: 0;
+      margin-bottom: 0;
+      border-bottom: 1px solid #e8e8e8;
+      letter-spacing: .3em;
+      text-indent: 1.42857143em;
+
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal-body  ul {
+      margin: 40px 0 0;
+      padding: 0;
+      text-align: center;
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal-body ul li {
+      float: left;
+      list-style: none;
+      width: 200px;
+      margin-bottom: 40px;
+    }
+    #yofc-ua-spa #yofc-ua-detect .yofc-modal-body ul em {
+      font-style: normal;
+      color: #00c1de;
+    }
   </style>
 </head>
+
 <body>
-  <app-root></app-root>
-  <div class="preloader"><div class="cs-loader"><div class="cs-loader-inner"><label>	●</label><label>	●</label><label>	●</label><label>	●</label><label>	●</label><label>	●</label></div></div>
+  <app-root id="yofc-auth-spa"></app-root>
+  <div id="yofc-ua-spa">
+    <div class="login-header">
+      <div class="login-header-logo pull-left">
+        <img src="assets/tmp/img/yofc-cmp-logo.png" />
+      </div>
+
+      <!-- <div class="login-header-right-menu pull-right">
+            <span>客服热线：88888888</span>
+        </div> -->
+    </div>
+    <div id="yofc-ua-detect" class="ngdialog">
+      <div class="ngdialog-content">
+        <div class="yofc-modal">
+          <div class="yofc-modal-header">
+            <h2>您的浏览器不支持云平台,请使用以下浏览器重试</h2>
+          </div>
+          <div class="yofc-modal-body">
+            <ul class="clearfix">
+              <li>
+                <img src="assets/tmp/img/brower/ie.png" />
+                <p>Internet Explorer</p>
+                <p>
+                  <em>v11.0</em>及以上版本
+                </p>
+              </li>
+              <li>
+                <img src="assets/tmp/img/brower/chrome.png" />
+                <p>Google Chrome</p>
+                <p>
+                  <em>v43.0</em>及以上版本
+                </p>
+              </li>
+              <li>
+                <img src="assets/tmp/img/brower/firefox.png" />
+                <p>火狐浏览器</p>
+                <p>
+                  <em>v30.0</em>及以上版本
+                </p>
+              </li>
+              <li>
+                <img src="assets/tmp/img/brower/safari.png" />
+                <p>Safari</p>
+                <p>
+                  <em>v9.0</em>及以上版本
+                </p>
+              </li>
+              <li>
+                <img src="assets/tmp/img/brower/360se.png" />
+                <p>360SE</p>
+                <p>
+                  <em>v8.0</em>及以上
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="preloader">
+    <div class="ball-pulse-sync" style="display:block;">
+      <div><span class="yf yf-logo-y"></span></div>
+      <div><span class="yf yf-logo-o"></span></div>
+      <div><span class="yf yf-logo-f"></span></div>
+      <div><span class="yf yf-logo-c"></span></div>
+      <div><span class="yf yf-logo-l"></span></div>
+      <div><span class="yf yf-logo-o"></span></div>
+      <div><span class="yf yf-logo-u"></span></div>
+      <div><span class="yf yf-logo-d"></span></div>
+    </div>
+  </div>
+
+  <script src="assets/tmp/js/detect/detect.min.js"></script>
+  <script type="text/javascript">
+    var ua = detect.parse(navigator.userAgent);
+    //console.log(ua.browser.family + "==" + ua.browser.major);
+    var browerObj = [{
+      name: 'chrome',
+      minVersion: 43
+    }, {
+      name: 'ie',
+      minVersion: 11
+    }, {
+      name: 'firefox',
+      minVersion: 30
+    }, {
+      name: 'safari',
+      minVersion: 9
+    }];
+    var family = '',
+      minVersion;
+    for (var i = 0; i < browerObj.length; i++) {
+      var item = browerObj[i];
+      if (ua.browser.family.toLowerCase().indexOf(item.name) > -1) {
+        family = item.name;
+        minVersion = item.minVersion;
+        break;
+      }
+    }
+    console.log(family + "==" + minVersion);
+    //alert(family + "==" + minVersion)
+    if (ua.browser.family.toLowerCase().indexOf(family) > -1) {
+      if (ua.browser.major < minVersion) {
+        document.getElementById("yofc-ua-spa").style.display = "block";
+        document.getElementById("yofc-auth-spa").style.display = "none";
+      } else {
+        document.getElementById("yofc-ua-spa").style.display = "none";
+        document.getElementById("yofc-auth-spa").style.display = "block";
+      }
+    }
+
+  </script>
 </body>
+
 </html>

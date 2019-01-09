@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SimpleGuard } from '@delon/auth';
+// import { SimpleGuard } from '@delon/auth';
 import { environment } from '@env/environment';
+import { ACLGuard } from '@delon/acl';
 // layout
 import { LayoutDefaultComponent } from '../layout/default/default.component';
 import { LayoutFullScreenComponent } from '../layout/fullscreen/fullscreen.component';
@@ -22,10 +23,11 @@ const routes: Routes = [
   {
     path: '',
     component: LayoutDefaultComponent,
-    canActivate: [SimpleGuard],
+    canActivate: [ACLGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent, data: { title: '云管理平台' } },
+      { path: '', redirectTo: 'cloud-resource-mgr/overview', pathMatch: 'full' },
+      { path: 'cloud-resource-mgr', redirectTo: 'cloud-resource-mgr/overview', pathMatch: 'full' },
+      { path: 'cloud-resource-mgr/overview', component: DashboardComponent, data: { title: '云管理平台' } },
       // 业务子模块
       // { path: 'widgets', loadChildren: './widgets/widgets.module#WidgetsModule' }
     ]

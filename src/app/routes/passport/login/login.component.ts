@@ -3,9 +3,11 @@ import { Component, OnDestroy, Inject, Optional, ViewChild} from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { CookieService } from 'ngx-cookie-service';
 import { CommonService } from '../../../shared/services/common.service';
 import { AuthService } from '../../../shared/services/auth.service';
-
+import { SessionService } from '../../../shared/utils/session';
+import { GlobalVariable } from '../../../app.global';
 import {
   SocialService,
   SocialOpenType,
@@ -41,8 +43,10 @@ export class UserLoginComponent implements OnDestroy {
     // @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
     private startupSrv: StartupService,
     public http: _HttpClient,
-    private auth: AuthService,
-    private common: CommonService
+    private authService: AuthService,
+    private commonService: CommonService,
+    private cookieService: CookieService,
+    private sessionService: SessionService,
   ) {
     // if (route.snapshot.queryParamMap.has('clean')) {
     //   tokenService.clear();
@@ -68,6 +72,14 @@ export class UserLoginComponent implements OnDestroy {
       }
     });
     // this.modalSrv.closeAll();
+
+    // 用户上次登录是否选择记住密码
+    if (this.cookieService.check(GlobalVariable.ACCOUNT_INFO_KEY)) {
+      const accountInfo = JSON.parse(this.cookieService.get(GlobalVariable.ACCOUNT_INFO_KEY));
+      this.form.controls.userName.setValue(this.authService.decrypt(accountInfo.account));
+      this.form.controls.password.setValue(this.authService.decrypt(accountInfo.password));
+      this.isRemember = true;
+    }
   }
 
   // #region fields
@@ -85,6 +97,8 @@ export class UserLoginComponent implements OnDestroy {
   error = '';
   // 是否开启大小写
   capital: boolean;
+  // 是否记住密码
+  isRemember: boolean;
 
   // 大小写是否锁定
   toggleCpas(event: any) {
@@ -123,7 +137,7 @@ export class UserLoginComponent implements OnDestroy {
   }
 
   openForgotModel() {
-    this.common.showComponentConfirm({
+    this.commonService.showComponentConfirm({
       nzTitle: '忘记密码',
       nzContent: ForgetPasswordComponent,
       nzComponentParams: {
@@ -132,6 +146,48 @@ export class UserLoginComponent implements OnDestroy {
     });
 
 
+  }
+
+  saveUserToLocal(remoteUserInfo) {
+    const userInfo = {
+      userName: remoteUserInfo.userName,
+      email: remoteUserInfo.email,
+      currentProject: remoteUserInfo.currentProject,
+      currentRegion: remoteUserInfo.currentRegion,
+      projectList: remoteUserInfo.projectList,
+      regionList: remoteUserInfo.regionList,
+      userQuotaInfo: {},
+      roleList: remoteUserInfo.roleList,
+      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
+      toApproveCount: remoteUserInfo.toApproveCount,
+      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
+      // pwdUnsafe: true
+    };
+    // 缓存到session
+    this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, userInfo);
+
+    /**
+     * 受cookie存储大小仅为4k的限制
+     * 放入到cookie中的信息，相较于$sessionStorage而言做了部分字段的删减,项目相关的都拿掉，在首页通过接口取查询
+     * @ {{userName: *, currentProject: *, currentRegion: *, roleList: *}}
+     */
+    const cookieUser = {
+      userName: remoteUserInfo.userName,
+      // email: remoteUserInfo.email,
+      currentProject: remoteUserInfo.currentProject,
+      currentRegion: remoteUserInfo.currentRegion,
+      // projectList: remoteUserInfo.projectList,
+      // regionList: remoteUserInfo.regionList,
+      userQuotaInfo: {},
+      roleList: remoteUserInfo.roleList,
+      hasEntered: false,
+      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
+      toApproveCount: remoteUserInfo.toApproveCount,
+      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
+      // pwdUnsafe: true
+    };
+
+    this.cookieService.set(GlobalVariable.USER_INFO_CACHE_KEY, JSON.stringify(cookieUser));
   }
 
   submit() {
@@ -149,7 +205,7 @@ export class UserLoginComponent implements OnDestroy {
     // }
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
-    this.auth.login({
+    this.authService.login({
       userName: this.userName.value,
       password: this.password.value,
     }).subscribe((res: any) => {
@@ -157,12 +213,42 @@ export class UserLoginComponent implements OnDestroy {
           // this.error = res.msg;
           return;
         }
-        // 清空路由复用信息
-        this.reuseTabService.clear();
-        // 设置用户Token信息
-        // this.tokenService.set(res.data);
-        // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-        this.startupSrv.load().then(() => this.router.navigate(['/']));
+        // 如果用户使用简单密码123456登录(123456为系统重置后的密码)
+        if (this.password.value === '123456') {
+          res.data.pwdUnsafe = true;
+        }
+
+        // 如果用户勾选了保存登录信息功能
+        if (this.isRemember) {
+          const accountInfo = {
+            account: this.authService.encrypt(this.userName.value),
+            password: this.authService.encrypt(this.password.value),
+            isRemember: this.authService.encrypt(this.isRemember + '')
+          };
+          // 设置cookie过期时间为一个月之后
+          const expireDate = new Date();
+          expireDate.setDate(expireDate.getDate() + 30);
+          this.cookieService.set(GlobalVariable.ACCOUNT_INFO_KEY, JSON.stringify(accountInfo), expireDate);
+        } else {
+          this.cookieService.delete(GlobalVariable.ACCOUNT_INFO_KEY);
+        }
+
+        // 缓存用户信息到 cookie session；
+        this.authService.saveUserToLocal(res.data).subscribe(() => {
+          // 清空路由复用信息
+          this.reuseTabService.clear();
+          // 设置用户Token信息
+          // this.tokenService.set(res.data);
+          // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+          this.startupSrv.load(res.data).then(() => this.router.navigate(['/']));
+        });
+      }, (err: any) => {
+
+        this.commonService.toaster({
+          type: 'error',
+          title: '账户登录',
+          content: err.error.message
+        });
       });
   }
 

@@ -3,8 +3,12 @@ import { SharedModule } from '@shared';
 
 import { LayoutDefaultComponent } from './default/default.component';
 import { LayoutFullScreenComponent } from './fullscreen/fullscreen.component';
-import { HeaderComponent } from './default/header/header.component';
 import { SidebarComponent } from './default/sidebar/sidebar.component';
+import { HeaderComponent } from './default/header/header.component';
+// 头部组件
+
+import { HeaderProjectComponent } from './default/header/components/project.component';
+
 import { HeaderSearchComponent } from './default/header/components/search.component';
 import { HeaderNotifyComponent } from './default/header/components/notify.component';
 import { HeaderTaskComponent } from './default/header/components/task.component';
@@ -28,6 +32,8 @@ const COMPONENTS = [
 ];
 
 const HEADERCOMPONENTS = [
+  HeaderProjectComponent,
+
   HeaderSearchComponent,
   HeaderNotifyComponent,
   HeaderTaskComponent,

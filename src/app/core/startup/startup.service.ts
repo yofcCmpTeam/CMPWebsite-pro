@@ -4,14 +4,18 @@ import { HttpClient } from '@angular/common/http';
 import { zip } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { MenuService, SettingsService, TitleService, ALAIN_I18N_TOKEN } from '@delon/theme';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+// import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ACLService } from '@delon/acl';
 import { TranslateService } from '@ngx-translate/core';
 import { I18NService } from '../i18n/i18n.service';
 
 import { NzIconService } from 'ng-zorro-antd';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../../shared/services/auth.service';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
+import { GlobalVariable } from '../../app.global';
+import { SessionService } from '../../shared/utils/session';
 
 // 获取用户基础数据
 
@@ -32,12 +36,15 @@ export class StartupService {
     private titleService: TitleService,
     // @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
-    private injector: Injector
+    private injector: Injector,
+    private cookieService: CookieService,
+    private authService: AuthService,
+    private sessionService: SessionService,
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
 
-  private viaHttp(resolve: any, reject: any) {
+  private viaHttp(data: any, resolve: any, reject: any) {
     zip(
       this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
       this.httpClient.get('assets/tmp/app-data.json')
@@ -48,23 +55,42 @@ export class StartupService {
           return [langData, appData];
       })
     ).subscribe(([langData, appData]) => {
-      console.log('appData', appData);
+      // console.log('appData:', appData);
+      // console.log('data:', data);
       // setting language data
       this.translate.setTranslation(this.i18n.defaultLang, langData);
       this.translate.setDefaultLang(this.i18n.defaultLang);
 
-      // application data
-      const res: any = appData;
       // 应用信息：包括站点名、描述、年份
-      this.settingService.setApp(res.app);
-      // 用户信息：包括姓名、头像、邮箱地址
-      this.settingService.setUser(res.user);
-      // ACL：设置权限为全量
-      this.aclService.setFull(true);
-      // 初始化菜单
-      this.menuService.add(res.menu);
+      this.settingService.setApp(appData.app);
       // 设置页面标题的前缀
-      this.titleService.prefix = res.app.name;
+      this.titleService.prefix = appData.app.name;
+      // 当前用户否已登录
+      const hasLogin = this.cookieService.check(GlobalVariable.USER_INFO_CACHE_KEY);
+
+      if (hasLogin ) {
+        // 获取当前登录角色 admin，padmn，puser
+        const role = this.authService.getCurrentRole();
+        if (role) {
+          // 用户信息：包括姓名、头像、邮箱地址
+          this.settingService.setUser(appData.user[role]);
+
+          if (role === 'admin') {
+              // ACL：设置权限为全量
+            this.aclService.setFull(true);
+          } else if (role === 'padmin') {
+            this.aclService.set(['padmin']);
+          } else if (role === 'puser') {
+            this.aclService.set(['puser']);
+          }
+
+
+          // 初始化菜单
+          this.menuService.add(appData[`${role}-menu`]);
+        }
+      } else {
+        this.injector.get(Router).navigateByUrl('/auth/login');
+      }
     },
     () => { },
     () => {
@@ -72,75 +98,12 @@ export class StartupService {
     });
   }
 
-  private viaMockI18n(resolve: any, reject: any) {
-    this.httpClient
-      .get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`)
-      .subscribe(langData => {
-        this.translate.setTranslation(this.i18n.defaultLang, langData);
-        this.translate.setDefaultLang(this.i18n.defaultLang);
-
-        this.viaMock(resolve, reject);
-      });
-  }
-
-  private viaMock(resolve: any, reject: any) {
-    // const tokenData = this.tokenService.get();
-    // if (!tokenData.token) {
-    //   this.injector.get(Router).navigateByUrl('/auth/login');
-    //   resolve({});
-    //   return;
-    // }
-    // mock
-    const app: any = {
-      name: `YOFCLOUD`,
-      description: `Ng-zorro admin panel front-end framework`
-    };
-    const user: any = {
-      name: 'Admin',
-      avatar: './assets/tmp/img/avatar.jpg',
-      email: 'cipchk@qq.com',
-      token: '123456789'
-    };
-    // 应用信息：包括站点名、描述、年份
-    this.settingService.setApp(app);
-    // 用户信息：包括姓名、头像、邮箱地址
-    this.settingService.setUser(user);
-    // ACL：设置权限为全量
-    this.aclService.setFull(true);
-    // 初始化菜单
-    this.menuService.add([
-      {
-        text: '主导航',
-        group: true,
-        children: [
-          {
-            text: '仪表盘',
-            link: '/dashboard',
-            icon: { type: 'icon', value: 'appstore' }
-          },
-          {
-            text: '快捷菜单',
-            icon: { type: 'icon', value: 'rocket' },
-            shortcutRoot: true
-          }
-        ]
-      }
-    ]);
-    // 设置页面标题的前缀
-    this.titleService.prefix = app.name;
-
-    resolve({});
-  }
-
-  load(): Promise<any> {
+  load(data: any): Promise<any> {
     // only works with promises
     // https://github.com/angular/angular/issues/15088
     return new Promise((resolve, reject) => {
       // http
-      this.viaHttp(resolve, reject);
-      // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      // this.viaMockI18n(resolve, reject);
-
+      this.viaHttp(data , resolve, reject);
     });
   }
 }

@@ -14,6 +14,8 @@ export class CommonService {
 
   constructor(
     private modalService: NzModalService,
+    private messageService: NzMessageService,
+    private notificationService: NzNotificationService,
     private injector: Injector
     ) {}
 
@@ -148,7 +150,7 @@ export class CommonService {
    * 接口响应提示框提示框
    * success,info, warning, error
    */
-  public toaster(): NzNotificationService {
-    return this.injector.get(NzNotificationService);
+  public toaster(data: any): NzNotificationService {
+    return this.injector.get(NzNotificationService)[data.type](data.title, data.content);
   }
 }

@@ -25,7 +25,7 @@
 
     <nz-form-item>
       <nz-col [nzSpan]="12">
-        <label nz-checkbox formControlName="remember">{{ 'app.login.remember-me' | translate }}</label>
+        <label nz-checkbox formControlName="remember" [(ngModel)]="isRemember">{{ 'app.login.remember-me' | translate }}</label>
       </nz-col>
       <nz-col [nzSpan]="12" class="text-right">
           <!-- <app-forget-password></app-forget-password> -->

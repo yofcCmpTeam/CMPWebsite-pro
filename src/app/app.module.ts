@@ -55,7 +55,7 @@ const FORM_MODULES = [ JsonSchemaModule ];
 // #endregion
 
 
-// #region Http Interceptors
+// #region Http Interceptors 拦截器
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 // import { SimpleInterceptor } from '@delon/auth';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
@@ -73,10 +73,13 @@ const GLOBAL_THIRD_MODULES = [
 // #region Startup Service
 import { StartupService } from '@core/startup/startup.service';
 export function StartupServiceFactory(startupService: StartupService): Function {
-  return () => startupService.load();
+  return () => startupService.load(null);
 }
 import { CommonService } from './shared/services/common.service';
 import { AuthService } from './shared/services/auth.service';
+// 引入cookie服务
+import { CookieService } from 'ngx-cookie-service';
+import { SessionService } from './shared/utils/session';
 const APPINIT_PROVIDES = [
   StartupService,
   {
@@ -86,7 +89,9 @@ const APPINIT_PROVIDES = [
     multi: true
   },
   CommonService,
-  AuthService
+  AuthService,
+  CookieService,
+  SessionService
 ];
 // #endregion
 

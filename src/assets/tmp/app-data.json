@@ -4,346 +4,124 @@
     "description": "YOFC Cloud Management Platform"
   },
   "user": {
-    "name": "Admin",
-    "avatar": "./assets/tmp/img/avatar.jpg",
-    "email": "cipchk@qq.com"
+    "admin": {
+      "name": "Admin",
+      "avatar": "./assets/tmp/img/avatar.jpg",
+      "email": "admin@qq.com",
+      "header": [{
+        "key": "toApproveCount",
+        "menuTitle": "待我审核",
+        "menuSubTitle": "条未处理",
+        "menuSubTitleClass": "red",
+        "count": 0,
+        "iconClass": "approval-pending",
+        "uiSerf": "yofc-cmp.admin-order-system.approve"
+    }]
+    },
+    "padmin": {
+      "name": "padmin",
+      "avatar": "./assets/tmp/img/avatar.jpg",
+      "email": "padmin@qq.com"
+    },
+    "puser": {
+      "name": "puser",
+      "avatar": "./assets/tmp/img/avatar.jpg",
+      "email": "puser@qq.com"
+    }
+
   },
-  "menu": [
+  "admin-menu": [
     {
-      "text": "主导航",
-      "i18n": "menu.main",
-      "group": true,
-      "hideInBreadcrumb": true,
+      "text": "长云管理平台",
+      "group": false,
       "children": [
         {
-          "text": "仪表盘",
-          "i18n": "menu.dashboard",
-          "icon": "anticon anticon-dashboard",
+          "text": "资源管理",
+          "link": "cloud-resource-mgr/overview",
+          "icon":"yf yf-cloud-resource-mgr",
+          "hideInBreadcrumb": false,
           "children": [
             {
-              "text": "仪表盘V1",
-              "link": "/dashboard/v1",
-              "i18n": "menu.dashboard.v1"
+              "text": "资源概况",
+              "link": "cloud-resource-mgr/overview",
+              "icon":""
             },
             {
-              "text": "分析页",
-              "link": "/dashboard/analysis",
-              "i18n": "menu.dashboard.analysis"
+              "text": "计算资源",
+              "link": "cloud-resource-mgr/calc",
+              "icon":""
             },
             {
-              "text": "监控页",
-              "link": "/dashboard/monitor",
-              "i18n": "menu.dashboard.monitor"
+              "text": "存储资源",
+              "link": "cloud-resource-mgr/network",
+              "icon":""
             },
             {
-              "text": "工作台",
-              "link": "/dashboard/workplace",
-              "i18n": "menu.dashboard.workplace"
+              "text": "网络资源",
+              "link": "cloud-resource-mgr/network",
+              "icon":""
+            },
+            {
+              "text": "安全资源",
+              "link": "cloud-resource-mgr/securitye",
+              "icon":""
             }
           ]
         },
         {
-          "text": "快捷菜单",
-          "i18n": "menu.shortcut",
-          "icon": "anticon anticon-rocket",
-          "shortcutRoot": true,
-          "children": []
-        },
-        {
-          "text": "小部件",
-          "i18n": "menu.widgets",
-          "link": "/widgets",
-          "icon": "anticon anticon-appstore",
-          "badge": 2
-        }
-      ]
-    },
-    {
-      "text": "Alain",
-      "i18n": "menu.alain",
-      "group": true,
-      "hideInBreadcrumb": true,
-      "children": [
-        {
-          "text": "样式",
-          "i18n": "menu.style",
-          "icon": "anticon anticon-info",
+          "text": "用户及项目",
+          "link": "user-quota-mgr/structurec",
+          "icon":"yf yf-user-and-project",
+          "hideInBreadcrumb": false,
           "children": [
             {
-              "text": "Typography",
-              "link": "/style/typography",
-              "i18n": "menu.style.typography",
-              "shortcut": true
+              "text": "组织架构",
+              "link": "user-quota-mgr/structure",
+              "icon": ""
             },
             {
-              "text": "Grid Masonry",
-              "link": "/style/gridmasonry",
-              "i18n": "menu.style.gridmasonry"
+              "text": "项目管理",
+              "link": "user-quota-mgr/project",
+              "icon": ""
             },
             {
-              "text": "Colors",
-              "link": "/style/colors",
-              "i18n": "menu.style.colors"
+              "text": "用户管理",
+              "link": "user-quota-mgr/user",
+              "icon": ""
             }
           ]
         },
         {
-          "text": "Delon",
-          "i18n": "menu.delon",
-          "icon": "anticon anticon-bulb",
+          "text": "运维管理",
+          "icon":"yf yf-cloud-opreation",
+          "hideInBreadcrumb": false,
           "children": [
             {
-              "text": "Dynamic Form",
-              "link": "/delon/form",
-              "i18n": "menu.delon.form"
+              "text": "数据中心管理",
+              "link": "cloud-operation-manager/dataCente",
+              "icon": ""
             },
             {
-              "text": "Simple Table",
-              "link": "/delon/simple-table",
-              "i18n": "menu.delon.table"
-            },
-            {
-              "text": "Util",
-              "link": "/delon/util",
-              "i18n": "menu.delon.util",
-              "acl": "role-a"
-            },
-            {
-              "text": "Print",
-              "link": "/delon/print",
-              "i18n": "menu.delon.print",
-              "acl": "role-b"
-            },
-            {
-              "text": "QR",
-              "link": "/delon/qr",
-              "i18n": "menu.delon.qr"
-            },
-            {
-              "text": "ACL",
-              "link": "/delon/acl",
-              "i18n": "menu.delon.acl"
-            },
-            {
-              "text": "Route Guard",
-              "link": "/delon/guard",
-              "i18n": "menu.delon.guard"
-            },
-            {
-              "text": "Cache",
-              "link": "/delon/cache",
-              "i18n": "menu.delon.cache"
-            },
-            {
-              "text": "Down File",
-              "link": "/delon/downfile",
-              "i18n": "menu.delon.downfile"
-            },
-            {
-              "text": "Xlsx",
-              "link": "/delon/xlsx",
-              "i18n": "menu.delon.xlsx"
-            },
-            {
-              "text": "Zip",
-              "link": "/delon/zip",
-              "i18n": "menu.delon.zip"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "text": "Pro",
-      "i18n": "menu.pro",
-      "group": true,
-      "hideInBreadcrumb": true,
-      "children": [
-        {
-          "text": "Form Page",
-          "i18n": "menu.form",
-          "link": "/pro/form",
-          "icon": "anticon anticon-edit",
-          "children": [
-            {
-              "text": "Basic Form",
-              "link": "/pro/form/basic-form",
-              "i18n": "menu.form.basicform",
-              "shortcut": true
-            },
-            {
-              "text": "Step Form",
-              "link": "/pro/form/step-form",
-              "i18n": "menu.form.stepform"
-            },
-            {
-              "text": "Advanced Form",
-              "link": "/pro/form/advanced-form",
-              "i18n": "menu.form.advancedform"
+              "text": "日志管理",
+              "link": "cloud-operation-manager/log'",
+              "icon": ""
             }
           ]
         },
         {
-          "text": "List",
-          "i18n": "menu.list",
-          "icon": "anticon anticon-appstore",
+          "text": "工单管理",
+          "icon":"yf yf-workorder-mgr",
+          "hideInBreadcrumb": false,
           "children": [
             {
-              "text": "Table List",
-              "link": "/pro/list/table-list",
-              "i18n": "menu.list.searchtable",
-              "shortcut": true
+              "text": "工单审核",
+              "link": "admin-order-system/approve",
+              "icon": ""
             },
             {
-              "text": "Basic List",
-              "link": "/pro/list/basic-list",
-              "i18n": "menu.list.basiclist"
-            },
-            {
-              "text": "Card List",
-              "link": "/pro/list/card-list",
-              "i18n": "menu.list.cardlist"
-            },
-            {
-              "text": "Search List",
-              "i18n": "menu.list.searchlist",
-              "children": [
-                {
-                  "link": "/pro/list/articles",
-                  "i18n": "menu.list.searchlist.articles"
-                },
-                {
-                  "link": "/pro/list/projects",
-                  "i18n": "menu.list.searchlist.projects",
-                  "shortcut": true
-                },
-                {
-                  "link": "/pro/list/applications",
-                  "i18n": "menu.list.searchlist.applications"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "text": "Profile",
-          "i18n": "menu.profile",
-          "icon": "anticon anticon-profile",
-          "children": [
-            {
-              "text": "Basic",
-              "link": "/pro/profile/basic",
-              "i18n": "menu.profile.basic"
-            },
-            {
-              "text": "Advanced",
-              "link": "/pro/profile/advanced",
-              "i18n": "menu.profile.advanced",
-              "shortcut": true
-            }
-          ]
-        },
-        {
-          "text": "Result",
-          "i18n": "menu.result",
-          "icon": "anticon anticon-check-circle",
-          "children": [
-            {
-              "text": "Success",
-              "link": "/pro/result/success",
-              "i18n": "menu.result.success"
-            },
-            {
-              "text": "Fail",
-              "link": "/pro/result/fail",
-              "i18n": "menu.result.fail"
-            }
-          ]
-        },
-        {
-          "text": "Exception",
-          "i18n": "menu.exception",
-          "link": "/",
-          "icon": "anticon anticon-exception",
-          "children": [
-            {
-              "text": "403",
-              "link": "/403",
-              "i18n": "menu.exception.not-permission",
-              "reuse": false
-            },
-            {
-              "text": "404",
-              "link": "/404",
-              "i18n": "menu.exception.not-find",
-              "reuse": false
-            },
-            {
-              "text": "500",
-              "link": "/500",
-              "i18n": "menu.exception.server-error",
-              "reuse": false
-            }
-          ]
-        },
-        {
-          "text": "Account",
-          "i18n": "menu.account",
-          "icon": "anticon anticon-user",
-          "children": [
-            {
-              "text": "center",
-              "link": "/pro/account/center",
-              "i18n": "menu.account.center"
-            },
-            {
-              "text": "settings",
-              "link": "/pro/account/settings",
-              "i18n": "menu.account.settings"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "text": "More",
-      "i18n": "menu.more",
-      "group": true,
-      "hideInBreadcrumb": true,
-      "children": [
-        {
-          "text": "Report",
-          "i18n": "menu.report",
-          "icon": "anticon anticon-cloud",
-          "children": [
-            {
-              "text": "Relation",
-              "link": "/data-v/relation",
-              "i18n": "menu.report.relation",
-              "reuse": false
-            }
-          ]
-        },
-        {
-          "text": "Extras",
-          "i18n": "menu.extras",
-          "link": "/extras",
-          "icon": "anticon anticon-link",
-          "children": [
-            {
-              "text": "Help Center",
-              "link": "/extras/helpcenter",
-              "i18n": "menu.extras.helpcenter"
-            },
-            {
-              "text": "Settings",
-              "link": "/extras/settings",
-              "i18n": "menu.extras.settings"
-            },
-            {
-              "text": "Poi",
-              "link": "/extras/poi",
-              "i18n": "menu.extras.poi"
+              "text": "工单查询",
+              "link": "admin-order-system/query",
+              "icon": ""
             }
           ]
         }
