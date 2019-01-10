@@ -16,116 +16,252 @@
         "count": 0,
         "iconClass": "approval-pending",
         "uiSerf": "yofc-cmp.admin-order-system.approve"
-    }]
+      }]
     },
     "padmin": {
       "name": "padmin",
       "avatar": "./assets/tmp/img/avatar.jpg",
-      "email": "padmin@qq.com"
+      "email": "padmin@qq.com",
+      "header": [{
+          "key": "unReadApprovedCount",
+          "menuTitle": "已被审核",
+          "menuSubTitle": "条未读",
+          "menuSubTitleClass": "blue",
+          "count": 0,
+          "iconClass": "check-circle-o",
+          "uiSerf": "yofc-cmp.work-order-system.workOrderStatus.apply"
+        },
+        {
+          "key": "toApproveCount",
+          "menuTitle": "待我审核",
+          "menuSubTitle": "条未处理",
+          "menuSubTitleClass": "red",
+          "count": 0,
+          "iconClass": "approval-pending",
+          "uiSerf": "yofc-cmp.work-order-system.workOrderStatus.networkApply"
+        }
+      ]
     },
     "puser": {
       "name": "puser",
       "avatar": "./assets/tmp/img/avatar.jpg",
-      "email": "puser@qq.com"
+      "email": "puser@qq.com",
+      "header": [{
+        "key": "unReadApprovedCount",
+        "menuTitle": "我的申请",
+        "menuSubTitle": "条未读",
+        "menuSubTitleClass": "yellow",
+        "count": 0,
+        "iconClass": "check-circle-o",
+        "uiSerf": "yofc-cmp.user-order-system.orderStatus"
+      }]
     }
 
   },
-  "admin-menu": [
-    {
-      "text": "长云管理平台",
-      "group": false,
-      "children": [
-        {
-          "text": "资源管理",
-          "link": "cloud-resource-mgr/overview",
-          "icon":"yf yf-cloud-resource-mgr",
-          "hideInBreadcrumb": false,
-          "children": [
-            {
-              "text": "资源概况",
-              "link": "cloud-resource-mgr/overview",
-              "icon":""
-            },
-            {
-              "text": "计算资源",
-              "link": "cloud-resource-mgr/calc",
-              "icon":""
-            },
-            {
-              "text": "存储资源",
-              "link": "cloud-resource-mgr/network",
-              "icon":""
-            },
-            {
-              "text": "网络资源",
-              "link": "cloud-resource-mgr/network",
-              "icon":""
-            },
-            {
-              "text": "安全资源",
-              "link": "cloud-resource-mgr/securitye",
-              "icon":""
-            }
-          ]
-        },
-        {
-          "text": "用户及项目",
-          "link": "user-quota-mgr/structurec",
-          "icon":"yf yf-user-and-project",
-          "hideInBreadcrumb": false,
-          "children": [
-            {
-              "text": "组织架构",
-              "link": "user-quota-mgr/structure",
-              "icon": ""
-            },
-            {
-              "text": "项目管理",
-              "link": "user-quota-mgr/project",
-              "icon": ""
-            },
-            {
-              "text": "用户管理",
-              "link": "user-quota-mgr/user",
-              "icon": ""
-            }
-          ]
-        },
-        {
-          "text": "运维管理",
-          "icon":"yf yf-cloud-opreation",
-          "hideInBreadcrumb": false,
-          "children": [
-            {
-              "text": "数据中心管理",
-              "link": "cloud-operation-manager/dataCente",
-              "icon": ""
-            },
-            {
-              "text": "日志管理",
-              "link": "cloud-operation-manager/log'",
-              "icon": ""
-            }
-          ]
-        },
-        {
-          "text": "工单管理",
-          "icon":"yf yf-workorder-mgr",
-          "hideInBreadcrumb": false,
-          "children": [
-            {
-              "text": "工单审核",
-              "link": "admin-order-system/approve",
-              "icon": ""
-            },
-            {
-              "text": "工单查询",
-              "link": "admin-order-system/query",
-              "icon": ""
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "admin-menu": [{
+    "text": "长云管理平台",
+    "group": false,
+    "children": [{
+        "text": "资源管理",
+        "link": "cloud-resource-mgr/overview",
+        "icon": "yf yf-cloud-resource-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "资源概况",
+            "link": "cloud-resource-mgr/overview",
+            "icon": ""
+          },
+          {
+            "text": "计算资源",
+            "link": "cloud-resource-mgr/calc",
+            "icon": ""
+          },
+          {
+            "text": "存储资源",
+            "link": "cloud-resource-mgr/network",
+            "icon": ""
+          },
+          {
+            "text": "网络资源",
+            "link": "cloud-resource-mgr/network",
+            "icon": ""
+          },
+          {
+            "text": "安全资源",
+            "link": "cloud-resource-mgr/securitye",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "用户及项目",
+        "link": "user-quota-mgr/structurec",
+        "icon": "yf yf-user-and-project",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "组织架构",
+            "link": "user-quota-mgr/structure",
+            "icon": ""
+          },
+          {
+            "text": "项目管理",
+            "link": "user-quota-mgr/project",
+            "icon": ""
+          },
+          {
+            "text": "用户管理",
+            "link": "user-quota-mgr/user",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "运维管理",
+        "icon": "yf yf-cloud-opreation",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "数据中心管理",
+            "link": "cloud-operation-manager/dataCente",
+            "icon": ""
+          },
+          {
+            "text": "日志管理",
+            "link": "cloud-operation-manager/log",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "工单管理",
+        "icon": "yf yf-workorder-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "工单审核",
+            "link": "admin-order-system/approve",
+            "icon": ""
+          },
+          {
+            "text": "工单查询",
+            "link": "admin-order-system/query",
+            "icon": ""
+          }
+        ]
+      }
+    ]
+  }],
+  "padmin-menu": [{
+    "text": "长云管理平台",
+    "group": false,
+    "children": [{
+        "text": "资源管理",
+        "link": "user-order-system/resourceApply",
+        "icon": "yf yf-cloud-resource-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "资源概况",
+            "link": "user-order-system/resourceApply/overview",
+            "icon": ""
+          },
+          {
+            "text": "我的主机",
+            "link": "user-order-system/resourceApply/cloudHostApply",
+            "icon": ""
+          },
+          {
+            "text": "我的存储",
+            "link": "user-order-system/resourceApply/storeApply",
+            "icon": ""
+          },
+          {
+            "text": "外网IP",
+            "link": "user-order-system/resourceApply/floatIp",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "配额申请",
+        "link": "work-order-system/quotaApply",
+        "icon": "yf user-and-project",
+        "hideInBreadcrumb": false
+      },
+      {
+        "text": "工单管理",
+        "icon": "yf workorder-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "我的申请",
+            "link": "work-order-system/workOrderStatus/apply",
+            "icon": ""
+          },
+          {
+            "text": "我已审核",
+            "link": "work-order-system/workOrderStatus/approved",
+            "icon": ""
+          },
+          {
+            "text": "待我审核",
+            "link": "work-order-system/workOrderStatus/networkApply",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "用户管理",
+        "icon": "yf user",
+        "link": "user-quota-mgr/user",
+        "hideInBreadcrumb": false
+      }
+    ]
+  }],
+  "puser-menu": [{
+    "text": "长云管理平台",
+    "group": false,
+    "children": [{
+        "text": "资源申请",
+        "link": "user-order-system/resourceApply",
+        "icon": "yf yf-cloud-resource-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "申请主机",
+            "link": "user-order-system.resourceApply/cloudHostApply",
+            "icon": ""
+          },
+          {
+            "text": "申请存储",
+            "link": "user-order-system/resourceApply/storeApply",
+            "icon": ""
+          }
+        ]
+      },
+      {
+        "text": "工单查询",
+        "link": "work-order-system/quotaApply",
+        "icon": "yf workorder-search",
+        "hideInBreadcrumb": false
+      }
+    ]
+  }],
+  "guestRegion-menu": [{
+    "text": "长云管理平台",
+    "group": false,
+    "children": [{
+        "text": "资源申请",
+        "link": "user-order-system/resourceApply",
+        "icon": "yf yf-cloud-resource-mgr",
+        "hideInBreadcrumb": false,
+        "children": [{
+            "text": "申请主机",
+            "link": "user-order-system.resourceApply/cloudHostApply",
+            "icon": ""
+          },
+          {
+            "text": "申请存储",
+            "link": "user-order-system/resourceApply/storeApply",
+            "icon": ""
+          }
+        ]
+      }
+    ]
+  }]
 }
