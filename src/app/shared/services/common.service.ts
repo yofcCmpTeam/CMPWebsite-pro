@@ -1,5 +1,5 @@
 // 封装的各类 公用方法
-import { Injectable , Injector} from '@angular/core';
+import { Injectable , Injector, ElementRef } from '@angular/core';
 import { NzModalRef, NzModalService, ModalButtonOptions, NzMessageService, NzNotificationService} from 'ng-zorro-antd';
 
 // 定义组件实例类型
@@ -16,24 +16,26 @@ export class CommonService {
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private notificationService: NzNotificationService,
-    private injector: Injector
+    private injector: Injector,
+    // private element: ElementRef
     ) {}
 
   /**
    * 只含有一个按钮的确认框
    * @param data.type  success,info, warning, error
    */
-  public showAlert(data: any): any {
+  public showAlert(data: any): NzModalRef {
     const type = data.type;
     const params = {
       nzTitle: data.nzTitle,
       nzContent: data.nzContent,
       nzWidth: data.nzWidth || 360,
+      nzOkText: data.nzOkText || '确认',
       nzWrapClassName: data.nzWrapClassName || 'vertical-center-modal',
       nzOnOk: () => {
-        if ( type === 'success') {
+        // if ( type === 'success') {
           this.modalService.closeAll();
-        }
+        // }
 
       }
     };
@@ -43,7 +45,7 @@ export class CommonService {
   /**
    * 包含组件的确认弹框
    */
-  public showComponentConfirm(data: any, callback?: any): any {
+  public showComponentConfirm(data: any, callback?: any): NzModalRef {
     const nzTitle: string = data.nzTitle;
     const nzContent = data.nzContent;
     const nzWidth: string | number = data.nzWidth || 550;
@@ -56,10 +58,10 @@ export class CommonService {
     // 点击蒙层是否允许关闭
     const nzMaskClosable = data.nzMaskClosable || false;
     // 弹框居中 vertical-center-modal
-    const nzWrapClassName = data.nzWrapClassName;
+    const nzWrapClassName = data.nzWrapClassName || 'vertical-center-modal';
     const nzComponentParams = data.nzComponentParams;
     const modal = this.modalService.create({
-      nzTitle  : nzTitle,
+      nzTitle  : `<i></i><span>${nzTitle}</span>`,
       nzContent: nzContent,
       nzWidth: nzWidth,
       nzKeyboard : nzKeyboard,
@@ -94,7 +96,7 @@ export class CommonService {
     return  modal;
   }
 
-  public createTplModal(tplTitle?: any, tplContent?: any,  tplFooter?: any): any {
+  public createTplModal(tplTitle?: any, tplContent?: any,  tplFooter?: any): NzModalRef {
     const tplModal = this.modalService.create({
       nzTitle: tplTitle,
       nzContent: tplContent,
@@ -153,4 +155,34 @@ export class CommonService {
   public toaster(data: any): NzNotificationService {
     return this.injector.get(NzNotificationService)[data.type](data.title, data.content);
   }
+
+  /**
+   * 显示Preloader
+   */
+  public showPreloader(callback) {
+    const loader = document.getElementById('login-loading');
+    if (loader) {
+      loader.className = 'preloader';
+      let timer = setTimeout(() => {
+        loader.className = 'preloader-hidden';
+        timer = null;
+        clearTimeout(timer);
+        if (callback) {
+          callback();
+        }
+      }, 500);
+    }
+  }
+
+  /**
+   * 显示Preloader
+   */
+  public hidePreloader() {
+    const loader =  document.getElementById('login-loading');
+    if (loader) {
+      loader.className = 'preloader-hidden';
+    }
+  }
+
+
 }

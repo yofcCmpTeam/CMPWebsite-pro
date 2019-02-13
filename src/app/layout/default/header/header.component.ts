@@ -48,9 +48,11 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.currentProject = '所有项目';
-
-    const cookieUser = JSON.parse(this.cookieService.get(GlobalVariable.USER_INFO_CACHE_KEY));
-    const cp = cookieUser ? cookieUser.currentProject : '';
+    let cookieUser, cp;
+    if (this.cookieService.check(GlobalVariable.USER_INFO_CACHE_KEY)) {
+      cookieUser = JSON.parse(this.cookieService.get(GlobalVariable.USER_INFO_CACHE_KEY));
+      cp = cookieUser ? cookieUser.currentProject : '';
+    }
     const remoteUserInfo = this.sessionService.get(GlobalVariable.USER_INFO_CACHE_KEY);
     /**
      *
@@ -84,13 +86,25 @@ export class HeaderComponent implements OnInit {
 
         // 获取数据中心列表
         this.authService.getRegionList().subscribe((res: ResponseInterface) => {
-          console.log('regionList:', res.data);
           const regionList = res.data;
           this.regionList = regionList;
+          _.forEach(this.regionList, (region) => {
+            region.projectList = [];
+          });
           // 更新是否为子项目标识符,下面方法体会依赖this.regionList数据，故写在这里的回调里
           this.authService.isSonProject = this._isSonProject(curProject);
           // 初始化是否是父级数据中心ladmin标识符
           this.isFatherLadmin = this.isLocalAdmin() && this._isFatherMember();
+          // 上级数据中心默认列表第一个为全部
+          if (this.isFatherLadmin) {
+            this.regionList = _.concat([{
+              id: 'ALL',
+              regionId: 'ALL',
+              isCurrent: true,
+              regionDisplayName: '所有项目',
+              projectList: []
+            }], this.regionList);
+          }
 
         });
 
@@ -99,8 +113,16 @@ export class HeaderComponent implements OnInit {
           console.log('projectList:', res.data);
           const projectList = res.data;
           this.projectList = projectList;
-
-
+          // 将项目放入对应的数据中心
+          _.forEach(this.regionList, (region) => {
+            _.forEach(this.projectList, (project) => {
+              if (region.regionId === project.regionId) {
+                region.projectList.push(project);
+              }
+            });
+          });
+          console.log('regionList:', this.regionList);
+          console.log('this.userInfo:', this.userInfo);
         });
 
       }
@@ -110,20 +132,24 @@ export class HeaderComponent implements OnInit {
 
   // 装载用户配额信息
   getUserQuotaInfo(projectId) {
-    const resp = this.authService.getUserQuotaInfo(projectId);
-    resp.subscribe(res => {
-      const data = res.data.data;
-      // //触发更新用户配额信息的动作
-      // this.$ngRedux.dispatch(actions.set_user_quota_info(data));
-      this.userInfo.userQuotaInfo = data;
-      // 并缓存到本地
-      // 缓存到session
-      this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, this.userInfo);
-    }, err => {
-        console.log(err);
-    });
-    return resp;
-}
+    return this.authService.getUserQuotaInfo(projectId);
+    // resp.subscribe(res => {
+    //   const data = res.data.data;
+    //   // //触发更新用户配额信息的动作
+    //   // this.$ngRedux.dispatch(actions.set_user_quota_info(data));
+    //   this.userInfo.userQuotaInfo = data;
+    //   // 并缓存到本地
+    //   // 缓存到session
+    //   this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, this.userInfo);
+    // }, err => {
+    //     console.log(err);
+    // });
+    // return resp;
+  }
+
+  selectProject(event) {
+    console.log(event);
+  }
 
   /**
    * 切换的项目是否是子数据中心的项目

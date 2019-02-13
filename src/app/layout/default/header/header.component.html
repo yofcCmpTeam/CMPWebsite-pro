@@ -21,28 +21,20 @@
     <!-- current project -->
     <li class="project">
       <nz-dropdown (nzVisibleChange)="change($event)">
-          <a nz-dropdown class="current-project-link">
+          <a nz-dropdown class="title-link">
             <i class="yofc-icon yf yf-project"></i>
             <span>当前项目：{{currentProject}}</span>
           </a>
-          <ul nz-menu *ngIf="isFatherLadmin">
+          <ul nz-menu *ngIf="!isFatherLadmin">
             <li nz-menu-item ngFor="userInfo.projectList">1st menu item</li>
           </ul>
           <!-- admin -->
-          <ul nz-menu>
-            <!-- <li nz-menu-item *ngIf="regionList.length == 0">3rd menu item</li> -->
-            <li nz-submenu *ngFor="let region of regionList">
+          <ul nz-menu *ngIf="isFatherLadmin" (nzClick)="selectProject($event)">
+            <!-- <li nz-menu-item *ngIf="region.projectList?.length === 0">{{region.regionDisplayName}}</li> -->
+            <li nz-submenu *ngFor="let region of regionList" [ngClass]="{'hasNoArrow': region.projectList?.length === 0}">
               <span title>{{region.regionDisplayName}}</span>
               <ul>
-                <li nz-menu-item>3rd menu item</li>
-                <li nz-menu-item>4th menu item</li>
-              </ul>
-            </li>
-            <li nz-submenu nzDisabled>
-              <span title>disabled sub menu</span>
-              <ul>
-                <li nz-menu-item>3rd menu item</li>
-                <li nz-menu-item>4th menu item</li>
+                <li nz-menu-item *ngFor="let project of region.projectList" [nzSelected]="project.isSelected">{{project.name}}</li>
               </ul>
             </li>
           </ul>
@@ -53,20 +45,20 @@
 
   <ul class="alain-default__nav">
     <!-- 数据中心 -->
-    <li>
-      <!-- <header-region></header-region> -->
+    <li class="default">
+      <header-region></header-region>
     </li>
     <!-- 工单 -->
-    <li class="hidden-mobile">
-      <!-- <header-order></header-order> -->
+    <li class="default">
+      <header-order></header-order>
     </li>
     <!-- 用户 -->
-    <li class="hidden-mobile">
-      <!-- <header-user></header-user> -->
+    <li class="default">
+      <header-user [userName]="userInfo.userName"></header-user>
     </li>
-    <!-- Settings -->
-    <li class="hidden-mobile">
-      <!-- <header-date></header-date> -->
+    <!-- 当前时间 -->
+    <li class="default date">
+      <header-date></header-date>
     </li>
   </ul>
 </div>

@@ -22,9 +22,11 @@ const THIRDMODULES = [
 // #region your componets & directives
 // actoins
 import { ForgetPasswordComponent } from './actions/forget-password/forget-password.component';
+import { ChangePasswordComponent } from './actions/header/change-password/change-password.component';
 
-const COMPONENTS = [
-  ForgetPasswordComponent
+const MODELCOMPONENTS = [
+  ForgetPasswordComponent,
+  ChangePasswordComponent
 ];
 const DIRECTIVES = [];
 // #endregion
@@ -44,7 +46,7 @@ const DIRECTIVES = [];
   ],
   declarations: [
     // your components
-    ...COMPONENTS,
+    ...MODELCOMPONENTS,
     ...DIRECTIVES,
   ],
   exports: [
@@ -61,12 +63,12 @@ const DIRECTIVES = [];
     // third libs
     ...THIRDMODULES,
     // your components
-    ...COMPONENTS,
+    ...MODELCOMPONENTS,
     ...DIRECTIVES
   ],
-  // 注意 如果使用Component模式，则需要在NgModule中的 declarations 和 entryComponents 加入自定义的Component
+  // 注意 model如果使用Component模式，则需要在NgModule中的 declarations 和 entryComponents 加入自定义的Component
   entryComponents: [
-    ForgetPasswordComponent
+    ...MODELCOMPONENTS
   ]
 })
 export class SharedModule { }

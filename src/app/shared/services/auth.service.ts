@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Injectable, Injector } from '@angular/core';
+import { _HttpClient, SettingsService } from '@delon/theme';
 import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 import { SessionService } from '../../shared/utils/session';
-import { Observable } from 'rxjs';
-import { retry } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { retry, delay } from 'rxjs/operators';
+import * as _ from 'lodash';
 
-const _ = require('lodash');
 
 // 引入加密库
 const CryptoJS = require('crypto-js');
@@ -14,13 +15,16 @@ const CryptoJS = require('crypto-js');
 import { UserInfoInterface } from '../utils/interface';
 import { GlobalVariable } from '../../app.global';
 
+
 @Injectable()
 export class AuthService {
 
   constructor(
     private http: _HttpClient,
+    private injector: Injector,
     private cookieService: CookieService,
     private sessionService: SessionService,
+    private settingsService: SettingsService,
   ) { }
 
   // 定义是否登录父级数据中心标志位，默认为false，表示登录的是本数据中心，非父级数据中心，当aside-nav.compent.js中初始化菜单时，该值刷新
@@ -52,50 +56,52 @@ export class AuthService {
   }
 
   /**
-   * name
+   * 缓存用户信息
    */
-  public saveUserToLocal (remoteUserInfo) {
-    return new Observable(() => {
-      const userInfo = {
-        userName: remoteUserInfo.userName,
-        email: remoteUserInfo.email,
-        currentProject: remoteUserInfo.currentProject,
-        currentRegion: remoteUserInfo.currentRegion,
-        projectList: remoteUserInfo.projectList,
-        regionList: remoteUserInfo.regionList,
-        userQuotaInfo: {},
-        roleList: remoteUserInfo.roleList,
-        pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
-        toApproveCount: remoteUserInfo.toApproveCount,
-        unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
-        // pwdUnsafe: true
-      };
-      // 缓存到session
-      this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, userInfo);
+  public saveUserToLocal (remoteUserInfo: UserInfoInterface): Observable<any> {
+    const userInfo = {
+      userName: remoteUserInfo.userName,
+      email: remoteUserInfo.email,
+      currentProject: remoteUserInfo.currentProject,
+      currentRegion: remoteUserInfo.currentRegion,
+      projectList: remoteUserInfo.projectList,
+      regionList: remoteUserInfo.regionList,
+      userQuotaInfo: {},
+      roleList: remoteUserInfo.roleList,
+      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
+      toApproveCount: remoteUserInfo.toApproveCount,
+      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
+      // pwdUnsafe: true
+    };
+    // 缓存到session
+    this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, userInfo);
 
-      /**
-       * 受cookie存储大小仅为4k的限制
-       * 放入到cookie中的信息，相较于$sessionStorage而言做了部分字段的删减,项目相关的都拿掉，在首页通过接口取查询
-       * @ {{userName: *, currentProject: *, currentRegion: *, roleList: *}}
-       */
-      const cookieUser = {
-        userName: remoteUserInfo.userName,
-        // email: remoteUserInfo.email,
-        currentProject: remoteUserInfo.currentProject,
-        currentRegion: remoteUserInfo.currentRegion,
-        // projectList: remoteUserInfo.projectList,
-        // regionList: remoteUserInfo.regionList,
-        userQuotaInfo: {},
-        roleList: remoteUserInfo.roleList,
-        hasEntered: false,
-        pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
-        toApproveCount: remoteUserInfo.toApproveCount,
-        unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
-        // pwdUnsafe: true
-      };
+    /**
+     * 受cookie存储大小仅为4k的限制
+     * 放入到cookie中的信息，相较于$sessionStorage而言做了部分字段的删减,项目相关的都拿掉，在首页通过接口取查询
+     * @ {{userName: *, currentProject: *, currentRegion: *, roleList: *}}
+     */
+    const cookieUser = {
+      userName: remoteUserInfo.userName,
+      // email: remoteUserInfo.email,
+      currentProject: remoteUserInfo.currentProject,
+      currentRegion: remoteUserInfo.currentRegion,
+      // projectList: remoteUserInfo.projectList,
+      // regionList: remoteUserInfo.regionList,
+      userQuotaInfo: {},
+      roleList: remoteUserInfo.roleList,
+      hasEntered: false,
+      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
+      toApproveCount: remoteUserInfo.toApproveCount,
+      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
+      // pwdUnsafe: true
+    };
+    this.cookieService.set(GlobalVariable.USER_INFO_CACHE_KEY, JSON.stringify(cookieUser));
 
-      this.cookieService.set(GlobalVariable.USER_INFO_CACHE_KEY, JSON.stringify(cookieUser));
-    });
+    // 延时跳转
+    return of(() => {}).pipe(
+      delay(800)
+    );
   }
 
   /**
@@ -106,28 +112,19 @@ export class AuthService {
   public login(param: any): any {
     const userName = param.userName;
     const password = param.password;
-    const login =  this.http.post('/rest/login/doLogin', {
+    return this.http.post('/rest/login/doLogin', {
       userName: this.encrypt(userName),
       password: this.encrypt(password),
       loginType: 1
     });
-
-    // login.subscribe((res: UserInfoInterface) => {
-    //   if (res) {
-    //     // 缓存用户信息
-    //     this.saveUserToLocal(JSON.stringify(res.data));
-    //   }
-    // });
-
-    return login;
   }
 
   /**
    * 登出
    *
    */
-  public logOut(): any {
-    return this.http.post('/rest/login/doLoginOut', {});
+  public logOut(): Observable<any> {
+    return this.http.get('/rest/login/doLoginOut', {});
   }
 
 
@@ -137,7 +134,7 @@ export class AuthService {
    * @param email 邮箱
    * @param email 备注
    */
-  public forgetPassword(param: any): any {
+  public forgetPassword(param: any): Observable<any> {
     const userName = param.userName;
     const email = param.email;
     const description = param.description;
@@ -145,6 +142,24 @@ export class AuthService {
       userName: userName,
       email: email,
       description: description
+    });
+  }
+  /**
+   * 修改密码
+   * @param userName 账户
+   * @param email 邮箱
+   * @param email 备注
+   */
+  public changePassword(param: any): Observable<any> {
+    const newPassword = param.newPassword;
+    const oldPassword = param.oldPassword;
+    return this.http.post('/rest/user/changePassword', {
+      'newPassword': newPassword,
+      'oldPassword': oldPassword
+    }, {
+      headers: {
+          noRedirect: true
+      }
     });
   }
 
@@ -161,18 +176,18 @@ export class AuthService {
     let localUserInfo: UserInfoInterface = this.sessionService.get(GlobalVariable.USER_INFO_CACHE_KEY);
 
     if (!cookieUser && !localUserInfo) {
-      window.location.href = '/auth.html';
+      this.injector.get(Router).navigateByUrl('/auth/login');
       return null;
     } else if ( localUserInfo && cookieUser ) {
       // localUserInfo和cookieUser信息不一致，即多tab页登录不同用户时
       if (localUserInfo.userName && (localUserInfo.userName !== cookieUser.userName)) {
-        window.location.href = '/auth.html';
+        this.injector.get(Router).navigateByUrl('/auth/login');
         this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, null);
         return null;
       }
     } else if (localUserInfo && !cookieUser) {
       // cookie用户信息不存在，那就重新登录吧
-      window.location.href = '/auth.html';
+      this.injector.get(Router).navigateByUrl('/auth/login');
       this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, null);
       return null;
     } else {
@@ -217,14 +232,14 @@ export class AuthService {
   /**
    * 查询用户下的项目
    */
-  public refreshProject() {
+  public refreshProject(): Observable<any> {
     return this.http.get(`rest/authority/user/projects`, {});
   }
 
   /**
    * 查询待处理工单数量
    */
-  public refreshUnreadList(isPolling) {
+  public refreshUnreadList(isPolling: boolean): Observable<any> {
     const headParams = isPolling ? {headers : {'Polling-Request' : 'Y'}} : {};
     return this.http.get(`rest/authority/user/orders`, headParams);
   }
@@ -232,21 +247,21 @@ export class AuthService {
   /**
    * 查询当前用户所有region（可以切换的数据中心）
    */
-  public getRegionList() {
+  public getRegionList(): Observable<any> {
     return this.http.get(`rest/region/user/regions`, {});
   }
 
   /**
    * 获得详细的regions和所属的projectList，包括isDefault和isCurrent
    */
-  public getDetailRegions() {
+  public getDetailRegions(): Observable<any> {
     return this.http.get(`/rest/authority/user/regions`, {});
   }
 
   /**
    * 获取用户配额信息
    */
-  public getUserQuotaInfo(projectId: string): any {
+  public getUserQuotaInfo(projectId: string): Observable<any> {
     if (!projectId) {
       projectId = this.loggedInfo().projectId;
     }
@@ -258,7 +273,7 @@ export class AuthService {
    * 切换当前项目
    * @param param.regionId 切换项目id
    */
-  public switchProject(param) {
+  public switchProject(param): Observable<any> {
     const projectId = param.id;
     const Observ = this.http.get(`/rest/authority/region/${projectId}/switch`, {});
     Observ.subscribe((res) => {
@@ -289,7 +304,7 @@ export class AuthService {
    * 切换数据中心
    * @param param.regionId 数据中心id
    */
-  public switchRegion(param) {
+  public switchRegion(param): Observable<any> {
     const regionId = param.regionId;
     return this.http.get(`/rest/authority/region/${regionId}/switch`, {});
   }
@@ -298,7 +313,7 @@ export class AuthService {
    * 切换模式
    * @param mode:string 路径参数，模式，必填，值项：SINGLE，MULTIPLE
    */
-  public switchRemotePattern(mode) {
+  public switchRemotePattern(mode): Observable<any> {
     const Observ = this.http.get(`/rest/authority/region/${mode}/switch`, {});
     Observ.subscribe((res) => {
       // 刷新当前视图
@@ -321,6 +336,52 @@ export class AuthService {
 
   //   }
   // }
+
+  /**
+   * 获取用户头部订单信息
+   * @param pos:string  订单-order， 菜单-menu
+   */
+  public getAuthHeaderOrderData(pos?: string): any {
+    // // 获取角色
+    // const role = this.getCurrentRole();
+    // const isAdmin = role === 'admin'; // admin
+    // const isUser = role === 'user'; // padmin
+    // const isMember = role === 'member'; // puser
+    // 获取用户数据
+    const authData = this.settingsService.user;
+    console.log('authData', authData);
+    if (authData) {
+      return authData.header;
+    }
+    // // 做客上级数据中心，权限按照puser设置
+    // if (this.isGuestRegion) {
+    //     return pos === 'order' ? AuthData.header['guestRegion'];
+    // }
+    // // 返回订单信息
+    // if (pos === 'order') {
+    //   if (isAdmin) {
+    //         return admin[pos];
+    //     } else if (isUser) {
+    //         return user[pos];
+    //     } else if (isMember) {
+    //         return member[pos];
+    //     } else {
+    //         return;
+    //     }
+    // } else {
+
+    // }
+
+    // if (isAdmin) {
+    //     return admin[pos];
+    // } else if (isUser) {
+    //     return user[pos];
+    // } else if (isMember) {
+    //     return member[pos];
+    // } else {
+    //     return;
+    // }
+}
 
 }
 

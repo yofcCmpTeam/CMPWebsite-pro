@@ -18,7 +18,38 @@
   border-color: #00c1de;
 }
 
-// 全局model样式
+/***** 全局model样式 start ****/
+// title添加竖线
+.ant-modal {
+  .ant-modal-close-x:hover{
+    i.anticon {
+      color: #00c1de;
+    }
+  }
+  .ant-modal-header .ant-modal-title{
+    >div{
+      position: relative;
+      i,span{
+        display: inline-block;
+      }
+      i{
+        width: 2px;
+        height: 14px;
+        background-color: #00c1de;
+        position: absolute;
+        top: 5px
+      }
+      span{
+        text-indent: 8px;
+      }
+    }
+  }
+  .ant-modal-body{
+    padding: 20px !important;
+  }
+}
+
+// model完全居中
 .vertical-center-modal {
   display: flex;
   align-items: center;
@@ -26,7 +57,32 @@
 }
 .vertical-center-modal .ant-modal {
   top: 0;
+  .ant-modal-header .ant-modal-title{
+    >div{
+      i,span{
+        display: inline-block;
+      }
+      i{
+        width: 2px;
+        height: 14px;
+        background-color: #00c1de;
+        margin-right: 5px;
+      }
+    }
+  }
 }
+
+/***** 全局model样式 end ****/
+
+/***** 全局form样式 start ****/
+.ant-form-item{
+  margin-bottom: 10px;
+}
+.ant-form-item-label{
+  text-align: left;
+}
+/***** 全局form样式 start ****/
+
 
 // menu折叠时 logo不变
 .alain-default__collapsed .alain-default__header-logo-expanded{
@@ -38,10 +94,64 @@
   display: inline-block;
   width: 24px;
   height: 24px;
-  position: absolute;
-  top: 13px;
-  left: 13px;
+  position: relative;
+  top: 2px;
+  left: 0px;
   line-height: 24px;
   font-size: 16px;
   text-align: center;
 }
+
+// 全局的dropdown样式
+.ant-dropdown {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  ul.ant-menu,.ant-dropdown-menu {
+    padding: 0px;
+    li[nz-menu-divider]{
+      margin: 0px;
+    }
+    li[nz-menu-item]{
+      height: 40px;
+      padding: 0px 20px;
+      line-height: 40px;
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+      display: flex;
+      align-items: center;
+      vertical-align: middle;
+      &.hasNoArrow{
+        i{
+          display: none !important;
+        }
+      }
+      &:hover{
+        background-color: #f5f5f5!important;
+      }
+      &.selected{
+        background-color: #e5f8fb!important;
+      }
+      .ant-menu-submenu-title{
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+      }
+      .yofc-icon{
+        position: static;
+        top: 0px;
+        left: 0px;
+      }
+    }
+    // .ant-menu-item:hover,
+    // .ant-menu-item-active,
+    // .ant-menu:not(.ant-menu-inline)
+    .ant-menu-
+
+    -open,
+    .ant-menu-submenu-active,
+    .ant-menu-submenu-title:hover {
+      color: #000;
+    }
+  }
+}
+
+

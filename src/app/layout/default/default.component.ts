@@ -24,7 +24,7 @@ import { updateHostClass } from '@delon/util';
 import { ScrollService, MenuService, SettingsService } from '@delon/theme';
 
 import { environment } from '@env/environment';
-import { SettingDrawerComponent } from './setting-drawer/setting-drawer.component';
+// import { SettingDrawerComponent } from './setting-drawer/setting-drawer.component';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -36,8 +36,8 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
-  @ViewChild('settingHost', { read: ViewContainerRef })
-  private settingHost: ViewContainerRef;
+  // @ViewChild('settingHost', { read: ViewContainerRef })
+  // private settingHost: ViewContainerRef;
   isFetching = false;
 
   constructor(
@@ -93,14 +93,14 @@ export class LayoutDefaultComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     // Setting componet for only developer
-    if (!environment.production) {
-      setTimeout(() => {
-        const settingFactory = this.resolver.resolveComponentFactory(
-          SettingDrawerComponent,
-        );
-        this.settingHost.createComponent(settingFactory);
-      }, 22);
-    }
+    // if (!environment.production) {
+    //   setTimeout(() => {
+    //     const settingFactory = this.resolver.resolveComponentFactory(
+    //       SettingDrawerComponent,
+    //     );
+    //     this.settingHost.createComponent(settingFactory);
+    //   }, 22);
+    // }
   }
 
   ngOnInit() {

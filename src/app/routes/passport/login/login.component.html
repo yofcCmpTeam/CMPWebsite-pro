@@ -25,19 +25,19 @@
 
     <nz-form-item>
       <nz-col [nzSpan]="12">
-        <label nz-checkbox formControlName="remember" [(ngModel)]="isRemember">{{ 'app.login.remember-me' | translate }}</label>
+        <label nz-checkbox formControlName="remember" [(ngModel)]="isRemember">记住密码</label>
       </nz-col>
       <nz-col [nzSpan]="12" class="text-right">
           <!-- <app-forget-password></app-forget-password> -->
-        <a class="forgot" (click)="openForgotModel()">{{ ('app.login.forgot-password' | translate) + '?' }}</a>
+        <a class="forgot" (click)="openForgotModel()">忘记密码？</a>
       </nz-col>
     </nz-form-item>
 
     <nz-alert *ngIf="userName.dirty && userName.errors || password.dirty && password.errors" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="false" class="mb-lg"></nz-alert>
 
     <nz-form-item>
-      <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="http.loading" nzBlock>
-        {{ 'app.login.login' | translate }}
+      <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="isLoading" nzBlock>
+        登录
       </button>
     </nz-form-item>
   </div>

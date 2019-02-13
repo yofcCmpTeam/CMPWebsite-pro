@@ -71,7 +71,7 @@ export class UserLoginComponent implements OnDestroy {
         }
       }
     });
-    // this.modalSrv.closeAll();
+    this.modalSrv.closeAll();
 
     // 用户上次登录是否选择记住密码
     if (this.cookieService.check(GlobalVariable.ACCOUNT_INFO_KEY)) {
@@ -99,6 +99,8 @@ export class UserLoginComponent implements OnDestroy {
   capital: boolean;
   // 是否记住密码
   isRemember: boolean;
+
+  isLoading = false;
 
   // 大小写是否锁定
   toggleCpas(event: any) {
@@ -144,50 +146,6 @@ export class UserLoginComponent implements OnDestroy {
         userName: this.userName.value,
       }
     });
-
-
-  }
-
-  saveUserToLocal(remoteUserInfo) {
-    const userInfo = {
-      userName: remoteUserInfo.userName,
-      email: remoteUserInfo.email,
-      currentProject: remoteUserInfo.currentProject,
-      currentRegion: remoteUserInfo.currentRegion,
-      projectList: remoteUserInfo.projectList,
-      regionList: remoteUserInfo.regionList,
-      userQuotaInfo: {},
-      roleList: remoteUserInfo.roleList,
-      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
-      toApproveCount: remoteUserInfo.toApproveCount,
-      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
-      // pwdUnsafe: true
-    };
-    // 缓存到session
-    this.sessionService.put(GlobalVariable.USER_INFO_CACHE_KEY, userInfo);
-
-    /**
-     * 受cookie存储大小仅为4k的限制
-     * 放入到cookie中的信息，相较于$sessionStorage而言做了部分字段的删减,项目相关的都拿掉，在首页通过接口取查询
-     * @ {{userName: *, currentProject: *, currentRegion: *, roleList: *}}
-     */
-    const cookieUser = {
-      userName: remoteUserInfo.userName,
-      // email: remoteUserInfo.email,
-      currentProject: remoteUserInfo.currentProject,
-      currentRegion: remoteUserInfo.currentRegion,
-      // projectList: remoteUserInfo.projectList,
-      // regionList: remoteUserInfo.regionList,
-      userQuotaInfo: {},
-      roleList: remoteUserInfo.roleList,
-      hasEntered: false,
-      pwdUnsafe: remoteUserInfo.pwdUnsafe || false,
-      toApproveCount: remoteUserInfo.toApproveCount,
-      unReadApprovedCount: remoteUserInfo.unReadApprovedCount,
-      // pwdUnsafe: true
-    };
-
-    this.cookieService.set(GlobalVariable.USER_INFO_CACHE_KEY, JSON.stringify(cookieUser));
   }
 
   submit() {
@@ -200,9 +158,12 @@ export class UserLoginComponent implements OnDestroy {
       return;
     }
 
-    // if ( this.form.controls.remember ) {
-    //   this.$cookies.remove('_loggedUser');
-    // }
+    this.isLoading = true;
+
+    if ( !this.form.controls.remember.value ) {
+      this.cookieService.delete(GlobalVariable.ACCOUNT_INFO_KEY);
+    }
+
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.authService.login({
@@ -211,6 +172,7 @@ export class UserLoginComponent implements OnDestroy {
     }).subscribe((res: any) => {
         if (res.code !== 200) {
           // this.error = res.msg;
+          this.isLoading = false;
           return;
         }
         // 如果用户使用简单密码123456登录(123456为系统重置后的密码)
@@ -240,10 +202,15 @@ export class UserLoginComponent implements OnDestroy {
           // 设置用户Token信息
           // this.tokenService.set(res.data);
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-          this.startupSrv.load(res.data).then(() => this.router.navigate(['/']));
+          this.startupSrv.load(res.data).then(() => {
+            this.commonService.showPreloader(() => {
+              this.router.navigate(['/']);
+            });
+          });
+          this.isLoading = false;
         });
       }, (err: any) => {
-
+        this.isLoading = false;
         this.commonService.toaster({
           type: 'error',
           title: '账户登录',
@@ -257,4 +224,5 @@ export class UserLoginComponent implements OnDestroy {
   ngOnDestroy(): void {
     // if (this.interval$) clearInterval(this.interval$);
   }
+
 }

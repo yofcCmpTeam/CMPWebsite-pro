@@ -2,8 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpInterceptor, HttpRequest, HttpHandler,
         HttpErrorResponse, HttpResponse, HttpEvent, HttpResponseBase } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { mergeMap, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { mergeMap, catchError , tap, filter} from 'rxjs/operators';
 import { NzMessageService, NzNotificationService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -41,36 +41,26 @@ export class DefaultInterceptor implements HttpInterceptor {
     setTimeout(() => this.injector.get(Router).navigateByUrl(url));
   }
 
+  // 交给具体页面中去处理了
   private checkStatus(ev:  HttpResponseBase) {
     if (ev.status >= 200 && ev.status < 300) return;
-
     const errortext =  CODEMESSAGE[ev.status] || ev.statusText;
     // if ( ev.error.message ) {
     //   errortext = ev.error.message;
     // }
-    this.injector.get(NzNotificationService).success(
-      `请求错误 ${ev.status}:`,
-      errortext
-    );
-    // if (ev.status >= 200 && ev.status < 300) {
-    //   this.injector.get(NzNotificationService).success(
-    //     `请求错误 ${ev.status}:`,
-    //     errortext
-    //   );
-    // } else {
-    //   this.injector.get(NzNotificationService).error(
-    //     `请求错误 ${ev.status}:`,
-    //     errortext
-    //   );
-    // }
+    // this.injector.get(NzNotificationService).success(
+    //   `请求错误 ${ev.status}:`,
+    //   errortext
+    // );
   }
 
-  private handleData(ev:  HttpResponseBase): Observable<any> {
+  private handleData(ev: HttpResponseBase): Observable<any> {
     // 可能会因为 `throw` 导出无法执行 `_HttpClient` 的 `end()` 操作
     if (ev.status > 0) {
       this.injector.get(_HttpClient).end();
     }
-    this.checkStatus(ev);
+    let isException = false;
+    // this.checkStatus(ev);
     // 业务处理：一些通用操作
     switch (ev.status) {
       case 200:
@@ -100,28 +90,35 @@ export class DefaultInterceptor implements HttpInterceptor {
 
         break;
       case 401: // 未登录状态码
-        // 请求错误 401: https://preview.pro.ant.design/api/401 用户没有权限（令牌、用户名、密码错误）。
-        this.goTo('/auth/login?clean=token');
+      case 0:
+        // 请求错误 401: https://preview.pro.ant.design/api/401 用户没有权限（令牌、用户名、密码错误）?clean=token。
+        this.goTo('/auth/login');
         break;
       case 403:
       case 404:
       case 500:
+        isException = true;
         this.goTo(`/exception/${ev.status}`);
         break;
       default:
         if (ev instanceof HttpErrorResponse) {
           console.warn('未可知错误，大部分是由于后端不支持CORS或无效配置引起', ev);
-          // return of(obs);
           // this.msg.error(ev.message);
         }
         break;
     }
-    return of(ev);
+    return of(ev)
+    .pipe(filter(e => {
+      console.log('e', e);
+      if (e) {
+        return e.status !== 500 ;
+      }
+
+    }));
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // 统一加上服务端前缀
-    // rest接口请求，代理到相应的服务器，非rest接口请求本地
     const url = req.url;
     // if (url.startsWith('/rest')) {
     //   url = environment.SERVER_URL + url;
@@ -134,13 +131,18 @@ export class DefaultInterceptor implements HttpInterceptor {
       mergeMap((event: any) => {
         // 允许统一对请求错误处理
         if (event instanceof HttpResponseBase) {
+          console.log('mergeMap');
           return this.handleData(event);
         }
-
         // 若一切都正常，则后续操作
         return of(event);
       }),
-      // catchError((err: HttpErrorResponse, obs: any) => this.handleData(err, obs)),
+      tap(
+        () => {},
+        // Operation failed; error is an HttpErrorResponse
+        error => this.handleData(error)
+      ),
+      // catchError((err: HttpErrorResponse) => this.handleData(err)),
     );
   }
 }

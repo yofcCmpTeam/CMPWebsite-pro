@@ -47,12 +47,13 @@ const routes: Routes = [
       { path: 'login', component: UserLoginComponent, data: { title: '登录' } }
     ]
   },
+  { path: 'auth.html', redirectTo: 'auth/login' },
   // 单页不包裹Layout
   { path: 'callback/:type', component: CallbackComponent },
   { path: 'lock', component: UserLockComponent, data: { title: '锁屏' } },
-  { path: '403', component: Exception403Component },
-  { path: '404', component: Exception404Component },
-  { path: '500', component: Exception500Component },
+  { path: 'exception/403', component: Exception403Component },
+  { path: 'exception/404', component: Exception404Component },
+  { path: 'exception/500', component: Exception500Component },
   { path: '**', redirectTo: 'dashboard' }
 ];
 

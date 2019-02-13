@@ -8,16 +8,13 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'header-search',
+  selector: 'header-region',
   template: `
-  <nz-input-group [nzAddOnBeforeIcon]="focus ? 'anticon anticon-arrow-down' : 'anticon anticon-search'">
-    <input nz-input [(ngModel)]="q" (focus)="qFocus()" (blur)="qBlur()"
-      [placeholder]="'menu.search.placeholder' | translate">
-  </nz-input-group>
+  <ul>12312321</ul>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeaderSearchComponent implements AfterViewInit {
+export class HeaderRegionComponent implements AfterViewInit {
   q: string;
 
   qIpt: HTMLInputElement;

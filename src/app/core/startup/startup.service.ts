@@ -78,9 +78,9 @@ export class StartupService {
           if (role === 'admin') {
               // ACL：设置权限为全量
             this.aclService.setFull(true);
-          } else if (role === 'padmin') {
+          } else if (role === 'user') {
             this.aclService.set(['padmin']);
-          } else if (role === 'puser') {
+          } else if (role === 'momber') {
             this.aclService.set(['puser']);
           }
 
